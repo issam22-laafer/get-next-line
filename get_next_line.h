@@ -9,3 +9,12 @@
 /*   Updated: 2023/11/30 10:15:04 by lissam           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#ifndef GNL
+#define GNL
+
+#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+
+#endif
