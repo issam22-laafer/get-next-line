@@ -5,61 +5,129 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: lissam <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/30 10:14:52 by lissam            #+#    #+#             */
-/*   Updated: 2023/11/30 10:14:55 by lissam           ###   ########.fr       */
+/*   Created: 2023/12/02 14:54:02 by lissam            #+#    #+#             */
+/*   Updated: 2023/12/02 14:54:06 by lissam           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-static void	ft_strcpy(char *dest, const char *src)
-{
-	int	i;
 
+char *chayta(char *str)
+{
+	int i;
+	int j;
+	int lenght;
+	char *lichat;
+
+	if(!str)
+		return (NULL);
+	lenght = ft_strlen(str);
 	i = 0;
-	while (src[i] != '\0')
+	j = 0;
+	while (str[i] != '\n')
+		i++;
+	i++;
+	lichat = (char *)malloc(sizeof(char) * (lenght - i + 1));
+	if (!lichat)
+		return (NULL);
+	while (str[i]!='\0')
 	{
-		dest[i] = src[i];
+        lichat[j] = str[i];
+        j++;
+		i++;
+    }
+	lichat[j] = '\0';
+	return lichat;
+}
+char *lighayban(char *str)
+{
+	int i;
+	int j;
+	char *the_line;
+
+	if (!str)
+		return (NULL);
+	if(str[0] == '\n')
+		return (ft_strdup("\n"));
+	j = 0;
+	while(str[j] != '\n')
+		j++;
+	the_line = malloc(j + 2);
+	i = 0;
+	while(str[i] != '\n')
+	{
+		the_line[i] = str[i];
 		i++;
 	}
-	dest[i] = '\0';
-}
-
-static char	*ft_strjoin(char const *s1, char const *s2)
-{
-	size_t	i;
-	size_t	l1;
-	size_t	l2;
-	char	*p;
-
-	if (!s1 && !s2)
-		return (NULL);
-	else if (!s1)
-		return (ft_strdup(s2));
-	else if (!s2)
-		return (ft_strdup(s1));
-	l1 = ft_strlen(s1);
-	l2 = ft_strlen(s2);
-	p = (char *)malloc(sizeof(char) * (l1 + l2 + 1));
-	if (!p)
-		return (NULL);
-	ft_strcpy(p, s1);
-	i = 0;
-	while (s2[i])
+	if (str[i] == '\n')
 	{
-		p[l1++] = s2[i++];
+		the_line[i] = '\n';
+		i++;
 	}
-	p[l1] = '\0';
-	return (p);
+	the_line[i] = '\0';
+	return the_line;
 }
-char    *get_next_line(int fd)
+
+char *next_line(int fd,char *str)
 {
-    static char *str;
-    str = NULL;
+	char *line;
+	int c;
+
+	c = 1;
+	line = malloc(BUFFER_SIZE + 1);
+	if(!line)
+		return (NULL);
+	while(!ft_strchr(str,'\n') && c != 0)
+	{
+		c = read(fd,line,BUFFER_SIZE);
+		if(c == -1)
+		{
+			free(line);
+			free(str);
+			return (NULL);
+		}
+		line[c] = '\0';
+		str = ft_strjoin(str,line);
+		if(!str)
+			return (NULL);
+	}
+	free(line);
+	return str;
+}
+char *get_next_line(int fd)
+{
+	static char *str;
+	char *s;
+
+	str = next_line(fd,str);
+	if (!str)
+		return (NULL);
+	s = lighayban(str);
+	str = chayta(str);
+	return s;
 
 }
 int main()
 {
-    int fd;
-    fd = open("issam.txt",O_RDONLY); 
-    printf("%s", get_next_line(fd));
+	int fd;
+	fd = open("issam.txt",O_RDONLY);
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	return 0;
 }
