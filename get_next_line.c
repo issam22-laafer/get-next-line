@@ -14,58 +14,59 @@
 
 char *chayta(char *str)
 {
-	int i;
-	int j;
-	int lenght;
-	char *lichat;
+		char	*s;
+	int		j;
+	size_t	i;
 
-	if(!str)
-		return (NULL);
-	lenght = ft_strlen(str);
 	i = 0;
 	j = 0;
-	while (str[i] != '\n')
-		i++;
-	i++;
-	lichat = (char *)malloc(sizeof(char) * (lenght - i + 1));
-	if (!lichat)
+	if (!str)
 		return (NULL);
-	while (str[i]!='\0')
-	{
-        lichat[j] = str[i];
-        j++;
+	while (str[i] && str[i] != '\n')
 		i++;
-    }
-	lichat[j] = '\0';
-	return lichat;
+	if (str[i] == '\0')
+	{
+		free(str);
+		return (NULL);
+	}
+	s = malloc(ft_strlen(str) - i + 1);
+	if (!s)
+		return (NULL);
+	if (str[i] == '\n')
+		i++;
+	while (str[i] != '\0')
+		s[j++] = str[i++];
+	s[j] = '\0';
+	free(str);
+	return (s);
 }
 char *lighayban(char *str)
 {
-	int i;
-	int j;
-	char *the_line;
+		char	*s;
+	int		i;
+	int		j;
 
-	if (!str)
-		return (NULL);
-	if(str[0] == '\n')
-		return (ft_strdup("\n"));
-	j = 0;
-	while(str[j] != '\n')
-		j++;
-	the_line = malloc(j + 2);
 	i = 0;
-	while(str[i] != '\n')
-	{
-		the_line[i] = str[i];
+	j = 0;
+	if (!str[0])
+		return (NULL);
+	while (str[i] && str[i] != '\n')
 		i++;
-	}
+	if (str[i])
+		i++;
+	s = malloc(i + 1);
+	if (!s)
+		return (NULL);
+	i = 0;
+	while (str[i] && str[i] != '\n')
+		s[j++] = str[i++];
 	if (str[i] == '\n')
 	{
-		the_line[i] = '\n';
-		i++;
+		s[j] = '\n';
+		j++;
 	}
-	the_line[i] = '\0';
-	return the_line;
+	s[j] = '\0';
+	return (s);
 }
 
 char *next_line(int fd,char *str)
@@ -99,6 +100,8 @@ char *get_next_line(int fd)
 	static char *str;
 	char *s;
 
+	if(BUFFER_SIZE <= 0 || fd < 0 || BUFFER_SIZE >= 2147483647)
+		return (NULL);
 	str = next_line(fd,str);
 	if (!str)
 		return (NULL);
@@ -111,8 +114,6 @@ int main()
 {
 	int fd;
 	fd = open("issam.txt",O_RDONLY);
-	printf("%s",get_next_line(fd));
-	printf("%s",get_next_line(fd));
 	printf("%s",get_next_line(fd));
 	printf("%s",get_next_line(fd));
 	printf("%s",get_next_line(fd));

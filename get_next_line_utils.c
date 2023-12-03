@@ -34,7 +34,7 @@ size_t	ft_strlen(char *str)
 	if (str == NULL)
 		return (0);
 	i = 0;
-	while (str[i] != '\0')
+	while (str[i])
 		i++;
 	return (i);
 }
