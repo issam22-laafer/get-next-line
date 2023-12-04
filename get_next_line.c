@@ -1,37 +1,47 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lissam <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/04 21:18:44 by lissam            #+#    #+#             */
+/*   Updated: 2023/12/04 21:18:51 by lissam           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
-
-char *all_buffer(int fd,char *str)
+char	*all_buffer(int fd, char *str)
 {
-    char *buffer;
+	char	*buffer;
+	int		rd;
 
-    int rd;
-
-    rd = 1;
-    buffer = malloc(BUFFER_SIZE + 1);
-    if(!buffer)
-        return NULL;
-    while (rd != 0 &&!ft_strchr(str, '\n'))
-    {
-        rd = read(fd,buffer,BUFFER_SIZE);
-        if(rd == -1)
-        {
-            free(buffer);
-            free(str);
-            return (NULL);
-        }
-        buffer[rd] = '\0';
-        str = ft_strjoin(str,buffer);
-        if(!str)
-            return (NULL);
-    }
-    free(buffer);
-    return (str);
+	rd = 1;
+	buffer = malloc(BUFFER_SIZE + 1);
+	if (!buffer)
+		return (NULL);
+	while (rd != 0 && !ft_strchr(str, '\n'))
+	{
+		rd = read(fd, buffer, BUFFER_SIZE);
+		if (rd == -1)
+		{
+			free(buffer);
+			free(str);
+			return (NULL);
+		}
+		buffer[rd] = '\0';
+		str = ft_strjoin(str, buffer);
+		if (!str)
+			return (NULL);
+	}
+	free(buffer);
+	return (str);
 }
 
-char *show_line(char *str)
+char	*show_line(char *str)
 {
-    		char	*s;
+	char	*s;
 	int		i;
 	int		j;
 
@@ -57,9 +67,10 @@ char *show_line(char *str)
 	s[j] = '\0';
 	return (s);
 }
-char *rest(char *str)
+
+char	*rest(char *str)
 {
-    		char	*s;
+	char	*s;
 	int		j;
 	size_t	i;
 
@@ -85,18 +96,18 @@ char *rest(char *str)
 	free(str);
 	return (s);
 }
-char *get_next_line(int fd)
+
+char	*get_next_line(int fd)
 {
-    static char *str;
-    char *s;
+	static char	*str;
+	char		*s;
 
-
-    if(BUFFER_SIZE <= 0 || fd < 0 || BUFFER_SIZE > 2147483647)
-        return NULL;
-    str = all_buffer(fd ,str);
-    if(!str)
-        return (NULL);
-    s = show_line(str);
-    str = rest(str);
-    return s;
+	if (BUFFER_SIZE <= 0 || fd < 0 || BUFFER_SIZE > 2147483647)
+		return (NULL);
+	str = all_buffer(fd, str);
+	if (!str)
+		return (NULL);
+	s = show_line(str);
+	str = rest(str);
+	return (s);
 }
