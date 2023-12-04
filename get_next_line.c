@@ -1,48 +1,37 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: lissam <marvin@42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/02 14:54:02 by lissam            #+#    #+#             */
-/*   Updated: 2023/12/02 14:54:06 by lissam           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "get_next_line.h"
 
-char *chayta(char *str)
-{
-		char	*s;
-	int		j;
-	size_t	i;
 
-	i = 0;
-	j = 0;
-	if (!str)
-		return (NULL);
-	while (str[i] && str[i] != '\n')
-		i++;
-	if (str[i] == '\0')
-	{
-		free(str);
-		return (NULL);
-	}
-	s = malloc(ft_strlen(str) - i + 1);
-	if (!s)
-		return (NULL);
-	if (str[i] == '\n')
-		i++;
-	while (str[i] != '\0')
-		s[j++] = str[i++];
-	s[j] = '\0';
-	free(str);
-	return (s);
-}
-char *lighayban(char *str)
+char *all_buffer(int fd,char *str)
 {
-		char	*s;
+    char *buffer;
+
+    int rd;
+
+    rd = 1;
+    buffer = malloc(BUFFER_SIZE + 1);
+    if(!buffer)
+        return NULL;
+    while (rd != 0 &&!ft_strchr(str, '\n'))
+    {
+        rd = read(fd,buffer,BUFFER_SIZE);
+        if(rd == -1)
+        {
+            free(buffer);
+            free(str);
+            return (NULL);
+        }
+        buffer[rd] = '\0';
+        str = ft_strjoin(str,buffer);
+        if(!str)
+            return (NULL);
+    }
+    free(buffer);
+    return (str);
+}
+
+char *show_line(char *str)
+{
+    		char	*s;
 	int		i;
 	int		j;
 
@@ -68,67 +57,46 @@ char *lighayban(char *str)
 	s[j] = '\0';
 	return (s);
 }
-
-char *next_line(int fd,char *str)
+char *rest(char *str)
 {
-	char *line;
-	int c;
+    		char	*s;
+	int		j;
+	size_t	i;
 
-	c = 1;
-	line = malloc(BUFFER_SIZE + 1);
-	if(!line)
+	i = 0;
+	j = 0;
+	if (!str)
 		return (NULL);
-	while(!ft_strchr(str,'\n') && c != 0)
+	while (str[i] && str[i] != '\n')
+		i++;
+	if (str[i] == '\0')
 	{
-		c = read(fd,line,BUFFER_SIZE);
-		if(c == -1)
-		{
-			free(line);
-			free(str);
-			return (NULL);
-		}
-		line[c] = '\0';
-		str = ft_strjoin(str,line);
-		if(!str)
-			return (NULL);
+		free(str);
+		return (NULL);
 	}
-	free(line);
-	return str;
+	s = malloc(ft_strlen(str) - i + 1);
+	if (!s)
+		return (NULL);
+	if (str[i] == '\n')
+		i++;
+	while (str[i] != '\0')
+		s[j++] = str[i++];
+	s[j] = '\0';
+	free(str);
+	return (s);
 }
 char *get_next_line(int fd)
 {
-	static char *str;
-	char *s;
+    static char *str;
+    char *s;
 
-	if(BUFFER_SIZE <= 0 || fd < 0 || BUFFER_SIZE >= 2147483647)
-		return (NULL);
-	str = next_line(fd,str);
-	if (!str)
-		return (NULL);
-	s = lighayban(str);
-	str = chayta(str);
-	return s;
 
-}
-int main()
-{
-	int fd;
-	fd = open("issam.txt",O_RDONLY);
-	printf("%s",get_next_line(fd));
-	printf("%s",get_next_line(fd));
-	printf("%s",get_next_line(fd));
-	printf("%s",get_next_line(fd));
-	printf("%s",get_next_line(fd));
-	printf("%s",get_next_line(fd));
-	printf("%s",get_next_line(fd));
-	printf("%s",get_next_line(fd));
-	printf("%s",get_next_line(fd));
-	printf("%s",get_next_line(fd));
-	printf("%s",get_next_line(fd));
-	printf("%s",get_next_line(fd));
-	printf("%s",get_next_line(fd));
-	printf("%s",get_next_line(fd));
-	printf("%s",get_next_line(fd));
-	printf("%s",get_next_line(fd));
-	return 0;
+    if(BUFFER_SIZE <= 0 || fd < 0 || BUFFER_SIZE > 2147483647)
+        return NULL;
+    str = all_buffer(fd ,str);
+    if(!str)
+        return (NULL);
+    s = show_line(str);
+    str = rest(str);
+    return s;
 }
