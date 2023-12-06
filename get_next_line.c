@@ -102,7 +102,7 @@ char	*get_next_line(int fd)
 	static char	*str;
 	char		*s;
 
-	if (BUFFER_SIZE <= 0 || fd < 0 || BUFFER_SIZE > 2147483647)
+	if (BUFFER_SIZE <= 0 || fd < 0 || BUFFER_SIZE >= 2147483647)
 		return (NULL);
 	str = all_buffer(fd, str);
 	if (!str)
